@@ -5,9 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 class Crossword:
-    def __init__(self, size, nb_words):
+    def __init__(self, size):
         self.size = size
-        self.nb_words = nb_words
         self.words_available = []
         self.occupied = []
 
@@ -26,7 +25,7 @@ class Crossword:
                 word = line.replace("\n", "")
                 self.dictionary.append(word)
 
-        while len(self.words_available) < nb_words*5:
+        while len(self.words_available) < size*10:
             random_word = random.choice(self.dictionary)
             if random_word not in self.words_available and len(random_word) <= self.size:
                 self.words_available.append(random_word)
@@ -42,7 +41,21 @@ class Crossword:
             return False
         return True
 
-    def is_valid_position(self, x, y, direction, word):
+    def is_valid_position(self, x, y, direction, word, placed_word=None):
+        if direction == "horizontal":
+            if self.is_in_range(x, y-1):
+                if self.board[x][y-1] != "#":
+                    return False
+            if self.is_in_range(x, y+len(word)):
+                if self.board[x][y+len(word)] != "#":
+                    return False
+        if direction == "vertical":
+            if self.is_in_range(x-1, y):
+                if self.board[x-1][y] != "#":
+                    return False
+            if self.is_in_range(x+len(word), y):
+                if self.board[x+len(word)][y] != "#":
+                    return False
         for i in range(len(word)):
             if direction == "vertical":
                 if not self.is_in_range(x+i, y) or (self.board[x+i][y] != "#" and self.board[x+i][y] != word[i]):
@@ -77,7 +90,8 @@ class Crossword:
                     if self.is_in_range(x - 1, y+i):
                         if self.board[x - 1][y+i] != "#":
                             return False
-        print(f"Valid position ({x}, {y}) for '{word}' in direction {direction}")
+
+        print(f"Valid position ({x}, {y}) for '{word}' in direction {direction} with placed word '{placed_word}'")
         return True
 
     def place_word_on_board(self, x, y, direction, word):
@@ -114,67 +128,18 @@ class Crossword:
                             else:
                                 x = placed_word["x"] + placed_word["word"].index(letter)
                                 y = placed_word["y"] - word.index(letter)
-                            if self.is_valid_position(x, y, direction, word):
+                            if self.is_valid_position(x, y, direction, word, placed_word):
                                 self.place_word_on_board(x, y, direction, word)
                                 done = True
                                 break
-                if len(self.occupied) >= self.nb_words:
-                    break
 
-    def get_word(self):
-        base = random.choice(self.occupied)
-        direction = "vertical" if base["direction"] == "horizontal" else "horizontal"
-        word = None
-        x = None
-        y = None
-        if direction == "vertical":
-            base_x = base["x"]
-            base_y = random.randint(base["y"], base["y"] + len(base["word"]) - 1)
-        else:
-            base_x = random.randint(base["x"], base["x"] + len(base["word"]) - 1)
-            base_y = base["y"]
-        while True:
-            word = random.choice(self.dictionary)
-            if word not in self.words and self.board[base_x][base_y] in word:
-                if direction == "vertical":
-                    x = base_x - word.index(self.board[base_x][base_y])
-                    y = base_y
-                else:
-                    x = base_x
-                    y = base_y - word.index(self.board[base_x][base_y])
-                if self.is_valid_position(x, y, direction, word):
-                    return x, y, direction, word
-
-    def create(self):
-        while True:
-            print("search")
-            x = random.randint(0, self.size - 1)
-            y = random.randint(0, self.size - 1)
-            direction = "vertical" if random.randint(0, 1) == 0 else "horizontal"
-            word = random.choice(self.dictionary)
-            if word not in self.words and self.is_valid_position(x, y, direction, word):
-                for j in range(len(word)):
-                    if direction == "vertical":
-                        self.board[x + j][y] = word[j]
-                    if direction == "horizontal":
-                        self.board[x][y + j] = word[j]
-                self.words.append(word)
-                self.occupied.append({"x": x, "y": y, "direction": direction, "word": word})
-                self.print_board()
-                break
-
-        for i in range(self.nb_words-1):
-            print("i: " + str(i))
-            x, y, direction, word = self.get_word()
-            for j in range(len(word)):
-                if direction == "vertical":
-                    self.board[x+j][y] = word[j]
-                if direction == "horizontal":
-                    self.board[x][y+j] = word[j]
-            self.words.append(word)
-            self.occupied.append({"x": x, "y": y, "direction": direction, "word": word})
-            self.print_board()
-        print("done")
+    def get_board_score(self):
+        occupied_spots = 0
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.board[i][j] != "#":
+                    occupied_spots += 1
+        return occupied_spots/(self.size**2)
 
     def save(self, filename):
         cell_size = 100
@@ -199,28 +164,25 @@ class Crossword:
                     ((j + 1) * cell_size - cell_border,
                      (i + 1) * cell_size - cell_border)
                 ]
-                if self.board[i][j]:
+                if self.board[i][j] != "#":
                     draw.rectangle(rect, fill="white")
-                    if self.board[i][j] != "#":
-                        draw.rectangle(rect, fill="white")
-                        w, h = draw.textsize(self.board[i][j], font=font)
-                        draw.text(
-                            (rect[0][0] + ((interior_size - w) / 2),
-                             rect[0][1] + ((interior_size - h) / 2) - 10),
-                            self.board[i][j], fill="black", font=font
-                        )
+                    w, h = draw.textsize(self.board[i][j], font=font)
+                    draw.text(
+                        (rect[0][0] + ((interior_size - w) / 2),
+                         rect[0][1] + ((interior_size - h) / 2) - 10),
+                        self.board[i][j], fill="black", font=font
+                    )
 
         img.save(filename)
 
 
 def main():
-    size = 12
-    words = 12
-    crossword = Crossword(size, words)
+    size = 20
+    crossword = Crossword(size)
     crossword.solve()
     print("-----------------------------------")
     crossword.print_board()
-    print(f"Words fitted: {len(crossword.occupied)}/{words}")
+    print(f"Words fitted: {len(crossword.occupied)} for a score of {crossword.get_board_score()}")
     crossword.save("output.png")
 
 
