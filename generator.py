@@ -8,6 +8,8 @@ class Crossword:
         self.size = size
         self.words_available = []
         self.occupied = []
+        self.definitions = dict()
+        self.sentences = []
 
         self.board = []
         for i in range(size):
@@ -16,11 +18,13 @@ class Crossword:
                 row.append("#")
             self.board.append(row)
 
-        path = "." + os.sep + "data" + os.sep + "words.txt"
+        path = "." + os.sep + "data" + os.sep + "dictionary.txt"
         with open(path) as file:
             lines = file.readlines()
             for line in lines:
-                word = line.replace("\n", "")
+                result = line.replace("\n", "").split("|")
+                word = result[0]
+                self.definitions[word] = result[1]
                 if len(word) <= self.size:
                     self.words_available.append(word)
 
@@ -112,7 +116,7 @@ class Crossword:
                 if self.board[x+len(word)][y] != "#":
                     return False
 
-        print(f"Valid position ({x}, {y}) for '{word}' in direction {direction}")
+        # print(f"Valid position ({x}, {y}) for '{word}' in direction {direction}")
         return True
 
     def place_word_on_board(self, x, y, direction, word):
@@ -125,6 +129,9 @@ class Crossword:
         self.words_available.remove(word)
 
     def solve(self):
+        # Check if possible
+        if len(self.words_available) == 0:
+            return False
         # Place randomly the first word on the board
         word = self.words_available[-1]
         while True:
@@ -157,6 +164,7 @@ class Crossword:
                                 self.place_word_on_board(x, y, direction, word)
                                 done = True
                                 break
+        return True
 
     def get_board_score(self):
         """
@@ -204,6 +212,7 @@ class Crossword:
                     if hide_words:
                         for word in self.occupied:
                             if i == word["x"] and j == word["y"]:
+                                self.sentences.append(self.definitions[word["word"]])
                                 w, h = draw.textsize(str(count), font=font_smaller)
                                 if word["direction"] == "vertical":
                                     draw.text(
@@ -227,6 +236,7 @@ class Crossword:
                         )
 
         img.save(filename)
+        print(self.sentences)
 
 
 def main():
