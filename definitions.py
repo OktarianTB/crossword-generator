@@ -24,4 +24,5 @@ with open(path1) as file:
 
 with open(path2, "w") as file:
     for line in dictionary:
-        file.write(line[0] + "|" + line[1] + "\n")
+        text = line[0] + "|" + line[1] + "\n"
+        file.write(text)

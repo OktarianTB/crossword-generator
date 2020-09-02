@@ -3,7 +3,6 @@ servant|a person employed by another, especially to perform domestic duties.
 rail|a bar of wood or metal fixed horizontally for any of various purposes, as for a support, barrier, fence, or railing.
 building|a relatively permanent enclosed construction over a plot of land, having a roof and usually windows and often more than one level, used for any of a wide variety of activities, as living, entertaining, or manufacturing.
 twist|to combine, as two or more strands or threads, by winding together; intertwine.
-skate|ice skate.
 love|a profoundly tender, passionate affection for another person.
 dock|a landing pier.
 pet|any domesticated or tamed animal that is kept as a companion and cared for affectionately.
@@ -131,7 +130,6 @@ stem|the ascending axis of a plant, whether above or below ground, which ordinar
 level|having no part higher than another; having a flat or even surface.
 example|one of a number of things, or a part of something, taken to show the character of the whole: This painting is an example of his early work.
 brick|a block of clay hardened by drying in the sun or burning in a kiln, and used for building, paving, etc.
-bulb|Botany.
 range|the extent to which or the limits between which variation is possible: the range of steel prices; a wide range of styles.
 sea|the salt waters that cover the greater part of the earth's surface.
 trouble|to disturb the mental calm and contentment of; worry; distress; agitate.
@@ -164,7 +162,6 @@ zephyr|a gentle, mild breeze.
 tramp|to tread or walk with a firm, heavy, resounding step.
 cherries|the fruit of any of various trees belonging to the genus Prunus, of the rose family, consisting of a pulpy, globular drupe enclosing a one-seeded smooth stone.
 doll|a small figure representing a baby or other human being, especially for use as a child's toy.
-wax|Also called beeswax.
 kittens|a young cat.
 tent|a portable shelter of skins, canvas, plastic, or the like, supported by one or more poles or a frame and often secured by ropes fastened to pegs in the ground.
 powder|any solid substance reduced to a state of fine, loose particles by crushing, grinding, disintegration, etc.
