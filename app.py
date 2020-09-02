@@ -4,6 +4,7 @@ from wtforms import IntegerField, SubmitField
 from generator import Crossword
 import random
 import string
+import os
 
 app = Flask(__name__)
 app.secret_key = "srydtufyguhlk"
@@ -22,11 +23,14 @@ def home():
         result = crossword.solve()
         if result:
             filename = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
-            crossword.save(f"./static/crosswords/{filename}.png")
-            crossword.save(f"./static/crosswords/{filename}-hidden.png", True)
+            path1 = "." + os.sep + "static" + os.sep + "crosswords" + os.sep + filename + ".png"
+            path2 = "." + os.sep + "static" + os.sep + "crosswords" + os.sep + filename + "-hidden.png"
+            print(path1, path2)
+            crossword.save(path1)
+            crossword.save(path2, True)
 
-            return render_template("result.html", path1=f"./static/crosswords/{filename}.png",
-                                   path2=f"./static/crosswords/{filename}-hidden.png", sentences=crossword.sentences)
+            return render_template("result.html", path1=path1,
+                                   path2=path2, sentences=crossword.sentences)
         return redirect(url_for("home"))
     return render_template("home.html", form=form)
 

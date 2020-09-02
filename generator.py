@@ -236,7 +236,6 @@ class Crossword:
                         )
 
         img.save(filename)
-        print(self.sentences)
 
 
 def main():
